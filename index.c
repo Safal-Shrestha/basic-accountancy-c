@@ -9,7 +9,8 @@ typedef struct login{
 
 creds *details;
 
-void authentication(creds,int);
+void admin();
+void client();
 
 int main()
 {
@@ -52,18 +53,22 @@ int main()
 				{
 					if(strcmp(auth.uname,details[i].uname)==0&&strcmp(auth.pw,details[i].pw)==0)
 					{
+						auth.role=details[i].role;
 						loggedin=1;
 					}
 				}
 				break;
 				
 			case 2:
+				fclose(fptr);
 				system("signup");
+				fptr=fopen("user.txt","ab+");
 				loggedin=1;
 				break;
 				
 			case 3:
 				system("checkData");
+				goto err;
 				break;
 				
 			case 4:
@@ -71,11 +76,24 @@ int main()
 				
 			default:
 				goto err;	
-		}
-		
+		}	
 	}
 	
+	if(auth.role==0)
+		admin();
+	else
+		client();	
 		
 	fclose(fptr);	
 	free(details);
+}
+
+void admin()
+{
+	printf("Admin");
+}
+
+void client()
+{
+	printf("Client");
 }
