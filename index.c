@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<conio.h>
 
 typedef struct login{
 	char uname[25], pw[25];
@@ -12,9 +13,10 @@ creds *details;
 void admin();
 void client();
 
-int main()
+void main()
 {
-	FILE *fptr;
+	FILE *fptr;//file pointer for user database
+	FILE *activeUser;//file pointer for activeUser.txt
 	creds auth;
 	int no=1, readLoop=0, newSize=1; //variable for reading data from database
 	int loggedin=0; //checks if loggedin
@@ -23,10 +25,10 @@ int main()
 	
 	details=(creds *)calloc(no,sizeof(creds));
 	fptr=fopen("user.txt","ab+");
+	activeUser=fopen("activeUser.txt","wb");//saves the data of the active user
 	
 	if(loggedin==0)
 	{
-		printf("%d\n",loggedin);
 		err:
 		printf("Menu:\n");
 		printf("1. Log In\n2. Sign Up\n3.Check Data\n4. Exit");
@@ -54,6 +56,7 @@ int main()
 					if(strcmp(auth.uname,details[i].uname)==0&&strcmp(auth.pw,details[i].pw)==0)
 					{
 						auth.role=details[i].role;
+						fwrite(&auth,sizeof(creds),1,activeUser);//saves the data of the active user
 						loggedin=1;
 					}
 				}
@@ -78,22 +81,44 @@ int main()
 				goto err;	
 		}	
 	}
+	if(loggedin==1)
+	{
+		if(auth.role==0)
+		{
+			fclose(fptr);
+			fclose(activeUser);
+			admin();
+		}
+		else
+		{
+			fclose(fptr);
+			fclose(activeUser);
+			client();		
+		}
+	}
 	
-	if(auth.role==0)
-		admin();
 	else
-		client();	
-		
+	{
+		printf("Login Error\n");
+		char ent;
+		printf("Press Enter");
+		scanf("%c",&ent);
+		system("cls");
+		goto err;
+	}
+	
+	
+	getch();
 	fclose(fptr);	
 	free(details);
 }
 
 void admin()
 {
-	printf("Admin");
+	system("admin");
 }
 
 void client()
 {
-	printf("Client");
+	system("client");
 }
