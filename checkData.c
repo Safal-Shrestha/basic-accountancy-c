@@ -3,6 +3,7 @@
 
 typedef struct login{
 	char uname[25], pw[25];
+	int role;
 }creds;
 
 creds *details;
@@ -28,7 +29,11 @@ int main()
 	
 	for(int i=0; i<newSize-1;i++)
 	{
-		printf("%s\n%s\n\n",details[i].uname,details[i].pw);
+		printf("%s\n%s\n",details[i].uname,details[i].pw);
+		if(details[i].role==0)
+			printf("Admin\n\n");
+		else
+			printf("Client\n\n");
 	}
 
 	

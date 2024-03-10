@@ -4,6 +4,7 @@
 
 typedef struct login{
 	char uname[25], pw[25];
+	int role;
 }creds;
 
 creds *details;
@@ -14,9 +15,13 @@ int main()
 {
 	FILE *fptr;
 	creds auth;
-	int no=1, readLoop=0, newSize=1, choice, loggedin=0;
+	int no=1, readLoop=0, newSize=1; //variable for reading data from database
+	int loggedin=0; //checks if loggedin
+	int choice, index; 
+	
 	
 	details=(creds *)calloc(no,sizeof(creds));
+	fptr=fopen("user.txt","ab+");
 	
 	if(loggedin==0)
 	{
@@ -34,8 +39,6 @@ int main()
 				gets(auth.uname);	
 				printf("Password: ");
 				gets(auth.pw);	
-				
-				fptr=fopen("user.txt","ab+");
 				
 				rewind(fptr);
 				while(fread((details+readLoop), sizeof(creds),1,fptr)==1)

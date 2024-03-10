@@ -3,6 +3,7 @@
 
 typedef struct login{
 	char uname[25], pw[25];
+	int role;
 }creds;
 
 int main()
@@ -17,11 +18,9 @@ int main()
 	gets(auth.uname);	
 	printf("Password: ");
 	gets(auth.pw);
+	auth.role=1;
 	
 	fwrite(&auth, sizeof(creds),1,fptr);
-	
-	system("index");
-
 	
 	fflush(fptr);
 	fclose(fptr);
