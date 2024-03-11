@@ -273,11 +273,13 @@ void checkInventory()
 	system("cls");
 	FILE *stmt;
 	product_detail *readStatement, *inventory;
-	int newSize=1,readLoop=0,uniqueProduct=0,uniqueProductPointer[uniqueProduct],uniqueProductId=0;
+	int newSize=1,readLoop=0,uniqueProduct=0,uniqueProductId=0;
+	int *uniqueProductPointer;
 	
 	stmt=fopen("statement.txt","rb");
 	readStatement=(product_detail *)calloc(1,sizeof(product_detail));
 	inventory=(product_detail *)calloc(1,sizeof(product_detail));
+	uniqueProductPointer=(int *)calloc(1,sizeof(int));
 	
 	while(fread((readStatement+readLoop),sizeof(product_detail),1,stmt)==1)
 	{
@@ -290,27 +292,11 @@ void checkInventory()
 	{
 		int flag=0,prodCount=0;
 		
-		if(readStatement[i].type=='p')
-		{
-			prodCount=readStatement[i].qnty;
-		}
-		else
-		{
-			prodCount=-readStatement[i].qnty;
-		}
 		
 		for(int j=i-1; j>=0; j--)
 		{
 			if(readStatement[i].id==readStatement[j].id && strcmp(readStatement[i].name,readStatement[j].name)==0)
 			{
-				if(readStatement[j].type=='p')
-				{
-					prodCount=prodCount+readStatement[j].qnty;
-				}
-				else
-				{
-					prodCount=prodCount-readStatement[j].qnty;
-				}
 				flag=1;
 			}
 		}
@@ -318,20 +304,45 @@ void checkInventory()
 		{          
 			continue;
 		}
-		readStatement[i].qnty=prodCount;
+		
+		for(int k=i+1;k<newSize-1;k++)
+		{
+			if(readStatement[i].type=='p')
+			{
+				prodCount=readStatement[i].qnty;
+			}
+			else
+			{
+				prodCount=-readStatement[i].qnty;
+			}
+			
+//			if(readStatement[i].id==readStatement[k].id && strcmp(readStatement[i].name,readStatement[k].name)==0)
+			if(readStatement[i].id==readStatement[k].id)
+			{
+				if(readStatement[k].type=='p')
+				{
+					prodCount=prodCount+readStatement[k].qnty;
+					readStatement[i].qnty=prodCount;
+				}
+				if(readStatement[k].type=='s')
+				{
+					prodCount=prodCount-readStatement[k].qnty;
+					readStatement[i].qnty=prodCount;
+				}
+			}
+		}
 		uniqueProductPointer[uniqueProductId]=i;
 		uniqueProductId++;
 		uniqueProduct++;
+		uniqueProductPointer=(int *)realloc(uniqueProductPointer,uniqueProduct*sizeof(int));
 	}
-	printf("%d\t%d",uniqueProduct,uniqueProductId);
 	inventory=(product_detail *)realloc(inventory,uniqueProduct*sizeof(product_detail));
-	
 	
 	printf("Inventory Details\n");
 	printf("S.No.\tParticulars\t\tQuantity\n");
 	for(int i=0;i<uniqueProduct;i++)
 	{
-		inventory[i]=readStatement[uniqueProductPointer[i]];	
+		inventory[i]=readStatement[uniqueProductPointer[i]];
 		printf("%d\t%s\t\t\t%d\n",i+1,inventory[i].name,inventory[i].qnty);
 	}
 	printf("\nPress Enter to continue to Home");
