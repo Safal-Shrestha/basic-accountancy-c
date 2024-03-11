@@ -7,8 +7,8 @@ typedef struct login{
 }creds;
 
 typedef struct {
-	int id;
-	char name[40],
+	int id,qnty,rate,total;
+	char name[40],dealer[40],message[100],mode,type;
 }statement;
 
 typedef struct{
@@ -109,8 +109,8 @@ void addPurchase()
 	purchase *info;
 	int no;
 	
-	purch=fopen("expenditure.txt","wb");
-	stmt=fopen("statement.txt","wb");
+	purch=fopen("expenditure.txt","ab");
+	stmt=fopen("statement.txt","ab");
 	
 	printf("Enter Number of Products: ");
 	scanf("%d",&no);
@@ -148,7 +148,43 @@ void addSales()
 {
 	system("cls");
 	printf("Add Sales Information\n");
-	FILE *sales;
+	FILE *sale;
+	FILE *stmt;
+	sales *info;
+	int no;
+	
+	sale=fopen("sales.txt","ab");
+	stmt=fopen("statement.txt","ab");
+	
+	printf("Enter Number of Products: ");
+	scanf("%d",&no);
+	
+	info=(sales *)calloc(no,sizeof(sales));
+	
+	for(int i=0;i<no;i++)
+	{
+		printf("Product Id: ");
+		scanf("%d",&info[i].s_id);
+		fflush(stdin);
+		printf("Product Name: ");
+		gets(info[i].s_name);
+		printf("Quantity: ");
+		scanf("%d",&info[i].s_qnty);
+		printf("Rate: ");
+		scanf("%d",&info[i].s_rate);
+		info[i].s_total=info[i].s_qnty*info[i].s_rate;
+		fflush(stdin);
+		printf("Buyer Name: ");
+		gets(info[i].s_cust);
+		printf("Cash/Credit(M/C): ");
+		scanf("%c",&info[i].s_mode);
+		info[i].type='s';
+		fwrite((info+i),sizeof(sales),1,sale);
+		fwrite((info+i),sizeof(sales),1,stmt);
+	}
+	fclose(sale);
+	fclose(stmt);
+	free(info);
 }
 
 void checkCredit()
