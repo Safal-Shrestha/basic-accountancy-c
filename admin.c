@@ -103,20 +103,20 @@ void stmt()
 	}
 	
 	printf("Statement\n");
-	printf("S.No.\tParticulars\tDebit\t\tCredit\n");
+	printf("S.No.\tParticulars\t\tDebit\t\tCredit\n");
 	for(int i=0;i<newSize-1;i++)
 	{
 		if(read[i].type=='p')
 		{
-			printf("%d\t%s\t\t%d\n",i+1,read[i].name,read[i].total);
-			printf("\t%s\t\t\t%d\n",read[i].dealer,read[i].total);
+			printf("%d\tFrom %s A/c Dr.\t%d\t\n",i+1,read[i].name,read[i].total);
+			printf("\tTo %s A/c\t\t\t\t%d\n",read[i].dealer,read[i].total);
 			printf("\t(%s)\n\n",read[i].message);
 		}
 		
 		if(read[i].type=='s')
 		{
-			printf("%d\t%s\t\t\t\t%d\n",i+1,read[i].name,read[i].total);
-			printf("\t%s\t\t%d\n",read[i].dealer,read[i].total);
+			printf("%d\tFrom %s A/c Cr.\t\t\t%d\n",i+1,read[i].name,read[i].total);
+			printf("\tTo %s A/c\t\t%d\n",read[i].dealer,read[i].total);
 			printf("\t(%s)\n\n",read[i].message);
 		}
 	}
