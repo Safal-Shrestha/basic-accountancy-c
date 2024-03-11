@@ -29,13 +29,13 @@ void checkInventory();
 
 int main()
 {
-	system("cls");
 	int choice;
 	FILE *fptr;
 	fptr=fopen("activeUser.txt","rb");
 	rewind(fptr);	
 	
 	err:
+	system("cls");
 	printf("Menu:\n");
 	printf("1. Statement\n");
 	printf("2. Add Purchase\n");
@@ -89,7 +89,7 @@ void stmt()
 	system("cls");
 	FILE *stmt;
 	statement *read;
-	int newSize=1,readLoop=0;
+	int newSize=1,readLoop=0,stmt_total=0;
 	
 	stmt=fopen("statement.txt","rb");
 	
@@ -111,6 +111,7 @@ void stmt()
 			printf("%d\tFrom %s A/c Dr.\t%d\t\n",i+1,read[i].name,read[i].total);
 			printf("\tTo %s A/c\t\t\t\t%d\n",read[i].dealer,read[i].total);
 			printf("\t(%s)\n\n",read[i].message);
+			stmt_total=stmt_total+read[i].total;
 		}
 		
 		if(read[i].type=='s')
@@ -118,8 +119,13 @@ void stmt()
 			printf("%d\tFrom %s A/c Cr.\t\t\t%d\n",i+1,read[i].name,read[i].total);
 			printf("\tTo %s A/c\t\t%d\n",read[i].dealer,read[i].total);
 			printf("\t(%s)\n\n",read[i].message);
+			stmt_total=stmt_total+read[i].total;
 		}
 	}
+	printf("-------------------------------------------------------\n");
+	printf("\t\t\t\t\%d\t\t%d\n\n",stmt_total,stmt_total);
+	printf("\n*Press Enter to continue to Home*");
+	scanf("%c");
 }
 
 void addPurchase()
@@ -128,12 +134,14 @@ void addPurchase()
 	printf("Add Purchase Information\n");
 	FILE *purch;
 	FILE *stmt;
+	FILE *cred;
 	purchase *info;
 	int no;
 	
 	purch=fopen("expenditure.txt","ab");
 	stmt=fopen("statement.txt","ab");
-	
+	cred=fopen("credit.txt","ab");
+		
 	printf("Enter Number of Products: ");
 	scanf("%d",&no);
 	
@@ -162,6 +170,10 @@ void addPurchase()
 		info[i].type='p';
 		fwrite((info+i),sizeof(purchase),1,purch);
 		fwrite((info+i),sizeof(purchase),1,stmt);
+		if(info[i].p_mode=='C'||info[i].p_mode=='c')
+		{
+			fwrite((info+i),sizeof(purchase),1,cred);
+		}
 	}
 	fclose(purch);
 	fclose(stmt);
@@ -175,11 +187,13 @@ void addSales()
 	printf("Add Sales Information\n");
 	FILE *sale;
 	FILE *stmt;
+	FILE *cred;
 	sales *info;
 	int no;
 	
 	sale=fopen("sales.txt","ab");
 	stmt=fopen("statement.txt","ab");
+	cred=fopen("credit.txt","ab");
 	
 	printf("Enter Number of Products: ");
 	scanf("%d",&no);
@@ -209,6 +223,10 @@ void addSales()
 		info[i].type='s';
 		fwrite((info+i),sizeof(sales),1,sale);
 		fwrite((info+i),sizeof(sales),1,stmt);
+		if(info[i].s_mode=='c'||info[i].s_mode=='C')
+		{
+			fwrite((info+i),sizeof(sales),1,cred);
+		}
 	}
 	fclose(sale);
 	fclose(stmt);
@@ -218,8 +236,43 @@ void addSales()
 void checkCredit()
 {
 	system("cls");
-	printf("Remaining Creditors\n");
 	FILE *credit;
+	statement *read;
+	int newSize=1,readLoop=0;
+	int cred=0,debit=0;
+	
+	read=(statement *)calloc(1,sizeof(statement));
+	credit=fopen("credit.txt","rb");
+	
+	while(fread((read+readLoop),sizeof(statement),1,credit)==1)
+	{
+		newSize++;
+		read=(statement *)realloc(read,newSize*sizeof(statement));
+		readLoop++;
+	}	
+	
+	printf("Remaining Credits\n");
+	printf("S.No.\tParticulars\t\tCreditor\tDebtor\n");
+	for(int i=0;i<newSize-1;i++)
+	{
+		if(read[i].type=='p')
+		{
+			printf("%d\tFrom %s A/c Dr.\t%d\t\n",i+1,read[i].name,read[i].total);
+			printf("\t(%s)\n\n",read[i].message);
+			cred=cred+read[i].total;
+		}
+		
+		if(read[i].type=='s')
+		{
+			printf("%d\tFrom %s A/c Cr.\t\t\t%d\n",i+1,read[i].name,read[i].total);
+			printf("\t(%s)\n\n",read[i].message);
+			debit=debit+read[i].total;
+		}
+	}
+	printf("-------------------------------------------------------\n");
+	printf("\t\t\t\t\%d\t\t%d\n\n",cred,debit);
+	printf("\nPress Enter to continue to Home");
+	scanf("%c");
 }
 
 void checkInventory()
