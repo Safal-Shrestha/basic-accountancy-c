@@ -9,17 +9,7 @@ typedef struct login{
 typedef struct {
 	int id,qnty,rate,total;
 	char name[40],dealer[40],message[100],mode,type;
-}statement;
-
-typedef struct{
-	int p_id,p_qnty,p_rate,p_total;
-	char p_name[40],p_dealer[40],p_message[100],p_mode,type;
-}purchase;
-
-typedef struct{
-	int s_id,s_qnty,s_rate,s_total;
-	char s_name[40],s_cust[40],s_message[100],s_mode,type;
-}sales;
+}product_detail;
 
 void stmt();
 void addPurchase();
@@ -88,17 +78,17 @@ void stmt()
 {
 	system("cls");
 	FILE *stmt;
-	statement *read;
+	product_detail *read;
 	int newSize=1,readLoop=0,stmt_total=0;
 	
 	stmt=fopen("statement.txt","rb");
 	
-	read=(statement *)calloc(1,sizeof(statement));
+	read=(product_detail *)calloc(1,sizeof(product_detail));
 	
-	while(fread((read+readLoop),sizeof(statement),1,stmt)==1)
+	while(fread((read+readLoop),sizeof(product_detail),1,stmt)==1)
 	{
 		newSize++;
-		read=(statement *)realloc(read,newSize*sizeof(statement));
+		read=(product_detail *)realloc(read,newSize*sizeof(product_detail));
 		readLoop++;
 	}
 	
@@ -135,7 +125,7 @@ void addPurchase()
 	FILE *purch;
 	FILE *stmt;
 	FILE *cred;
-	purchase *info;
+	product_detail *info;
 	int no;
 	
 	purch=fopen("expenditure.txt","ab");
@@ -145,34 +135,34 @@ void addPurchase()
 	printf("Enter Number of Products: ");
 	scanf("%d",&no);
 	
-	info=(purchase *)calloc(no,sizeof(purchase));
+	info=(product_detail *)calloc(no,sizeof(product_detail));
 	
 	for(int i=0;i<no;i++)
 	{
 		printf("Product Id: ");
-		scanf("%d",&info[i].p_id);
+		scanf("%d",&info[i].id);
 		fflush(stdin);
 		printf("Product Name: ");
-		gets(info[i].p_name);
+		gets(info[i].name);
 		printf("Quantity: ");
-		scanf("%d",&info[i].p_qnty);
+		scanf("%d",&info[i].qnty);
 		printf("Rate: ");
-		scanf("%d",&info[i].p_rate);
-		info[i].p_total=info[i].p_qnty*info[i].p_rate;
+		scanf("%d",&info[i].rate);
+		info[i].total=info[i].qnty*info[i].rate;
 		fflush(stdin);
 		printf("Supplier Name: ");
-		gets(info[i].p_dealer);
+		gets(info[i].dealer);
 		printf("Cash/Credit(M/C): ");
-		scanf("%c",&info[i].p_mode);
+		scanf("%c",&info[i].mode);
 		fflush(stdin);
 		printf("Enter Narration: ");
-		gets(info[i].p_message);
+		gets(info[i].message);
 		info[i].type='p';
-		fwrite((info+i),sizeof(purchase),1,purch);
-		fwrite((info+i),sizeof(purchase),1,stmt);
-		if(info[i].p_mode=='C'||info[i].p_mode=='c')
+		fwrite((info+i),sizeof(product_detail),1,purch);
+		fwrite((info+i),sizeof(product_detail),1,stmt);
+		if(info[i].mode=='C'||info[i].mode=='c')
 		{
-			fwrite((info+i),sizeof(purchase),1,cred);
+			fwrite((info+i),sizeof(product_detail),1,cred);
 		}
 	}
 	fclose(purch);
@@ -188,7 +178,7 @@ void addSales()
 	FILE *sale;
 	FILE *stmt;
 	FILE *cred;
-	sales *info;
+	product_detail *info;
 	int no;
 	
 	sale=fopen("sales.txt","ab");
@@ -198,34 +188,34 @@ void addSales()
 	printf("Enter Number of Products: ");
 	scanf("%d",&no);
 	
-	info=(sales *)calloc(no,sizeof(sales));
+	info=(product_detail *)calloc(no,sizeof(product_detail));
 	
 	for(int i=0;i<no;i++)
 	{
 		printf("Product Id: ");
-		scanf("%d",&info[i].s_id);
+		scanf("%d",&info[i].id);
 		fflush(stdin);
 		printf("Product Name: ");
-		gets(info[i].s_name);
+		gets(info[i].name);
 		printf("Quantity: ");
-		scanf("%d",&info[i].s_qnty);
+		scanf("%d",&info[i].qnty);
 		printf("Rate: ");
-		scanf("%d",&info[i].s_rate);
-		info[i].s_total=info[i].s_qnty*info[i].s_rate;
+		scanf("%d",&info[i].rate);
+		info[i].total=info[i].qnty*info[i].rate;
 		fflush(stdin);
 		printf("Buyer Name: ");
-		gets(info[i].s_cust);
+		gets(info[i].dealer);
 		printf("Cash/Credit(M/C): ");
-		scanf("%c",&info[i].s_mode);
+		scanf("%c",&info[i].mode);
 		fflush(stdin);
 		printf("Enter Narration: ");
-		gets(info[i].s_message);
+		gets(info[i].message);
 		info[i].type='s';
-		fwrite((info+i),sizeof(sales),1,sale);
-		fwrite((info+i),sizeof(sales),1,stmt);
-		if(info[i].s_mode=='c'||info[i].s_mode=='C')
+		fwrite((info+i),sizeof(product_detail),1,sale);
+		fwrite((info+i),sizeof(product_detail),1,stmt);
+		if(info[i].mode=='c'||info[i].mode=='C')
 		{
-			fwrite((info+i),sizeof(sales),1,cred);
+			fwrite((info+i),sizeof(product_detail),1,cred);
 		}
 	}
 	fclose(sale);
@@ -237,17 +227,17 @@ void checkCredit()
 {
 	system("cls");
 	FILE *credit;
-	statement *read;
+	product_detail *read;
 	int newSize=1,readLoop=0;
 	int cred=0,debit=0;
 	
-	read=(statement *)calloc(1,sizeof(statement));
+	read=(product_detail *)calloc(1,sizeof(product_detail));
 	credit=fopen("credit.txt","rb");
 	
-	while(fread((read+readLoop),sizeof(statement),1,credit)==1)
+	while(fread((read+readLoop),sizeof(product_detail),1,credit)==1)
 	{
 		newSize++;
-		read=(statement *)realloc(read,newSize*sizeof(statement));
+		read=(product_detail *)realloc(read,newSize*sizeof(product_detail));
 		readLoop++;
 	}	
 	
