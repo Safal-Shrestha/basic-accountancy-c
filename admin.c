@@ -31,16 +31,9 @@ int main()
 {
 	system("cls");
 	int choice;
-	creds details;
 	FILE *fptr;
 	fptr=fopen("activeUser.txt","rb");
-	rewind(fptr);
-	fread(&details,sizeof(creds),1,fptr);
-	if((details.uname)==NULL)
-	{
-		exit(0);
-	}
-	printf("Admin\n");
+	rewind(fptr);	
 	
 	err:
 	printf("Menu:\n");
@@ -80,24 +73,53 @@ int main()
 			fclose(fptr);
 			fptr=fopen("activeUser.txt","wb");
 			system("index");
+			exit(0);
 			break;
 			
 		default:
 			system("cls");
 			goto err;
 			
-		goto err;
 	}
+	goto err;
 }
 
 void stmt()
 {
 	system("cls");
-	printf("Statement\n");
 	FILE *stmt;
+	statement *read;
+	int newSize=1,readLoop=0;
 	
 	stmt=fopen("statement.txt","rb");
 	
+	read=(statement *)calloc(1,sizeof(statement));
+	
+	while(fread((read+readLoop),sizeof(statement),1,stmt)==1)
+	{
+		newSize++;
+		read=(statement *)realloc(read,newSize*sizeof(statement));
+		readLoop++;
+	}
+	
+	printf("Statement\n");
+	printf("S.No.\tParticulars\tDebit\t\tCredit\n");
+	for(int i=0;i<newSize-1;i++)
+	{
+		if(read[i].type=='p')
+		{
+			printf("%d\t%s\t\t%d\n",i+1,read[i].name,read[i].total);
+			printf("\t%s\t\t\t%d\n",read[i].dealer,read[i].total);
+			printf("\t(%s)\n\n",read[i].message);
+		}
+		
+		if(read[i].type=='s')
+		{
+			printf("%d\t%s\t\t\t\t%d\n",i+1,read[i].name,read[i].total);
+			printf("\t%s\t\t%d\n",read[i].dealer,read[i].total);
+			printf("\t(%s)\n\n",read[i].message);
+		}
+	}
 }
 
 void addPurchase()
@@ -134,6 +156,9 @@ void addPurchase()
 		gets(info[i].p_dealer);
 		printf("Cash/Credit(M/C): ");
 		scanf("%c",&info[i].p_mode);
+		fflush(stdin);
+		printf("Enter Narration: ");
+		gets(info[i].p_message);
 		info[i].type='p';
 		fwrite((info+i),sizeof(purchase),1,purch);
 		fwrite((info+i),sizeof(purchase),1,stmt);
@@ -178,6 +203,9 @@ void addSales()
 		gets(info[i].s_cust);
 		printf("Cash/Credit(M/C): ");
 		scanf("%c",&info[i].s_mode);
+		fflush(stdin);
+		printf("Enter Narration: ");
+		gets(info[i].s_message);
 		info[i].type='s';
 		fwrite((info+i),sizeof(sales),1,sale);
 		fwrite((info+i),sizeof(sales),1,stmt);
