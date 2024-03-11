@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 
 typedef struct login{
 	char uname[25], pw[25];
@@ -57,7 +58,7 @@ int main()
 		
 		case 5:
 			checkInventory();
-			break;
+			goto err;
 		
 		case 6:
 			fclose(fptr);
@@ -167,6 +168,7 @@ void addPurchase()
 	}
 	fclose(purch);
 	fclose(stmt);
+	fclose(cred);
 	free(info);
 	
 }
@@ -220,6 +222,7 @@ void addSales()
 	}
 	fclose(sale);
 	fclose(stmt);
+	fclose(cred);
 	free(info);
 }
 
@@ -268,6 +271,69 @@ void checkCredit()
 void checkInventory()
 {
 	system("cls");
+	FILE *stmt;
+	product_detail *readStatement, *inventory;
+	int newSize=1,readLoop=0,uniqueProduct=0,uniqueProductPointer[uniqueProduct],uniqueProductId=0;
+	
+	stmt=fopen("statement.txt","rb");
+	readStatement=(product_detail *)calloc(1,sizeof(product_detail));
+	inventory=(product_detail *)calloc(1,sizeof(product_detail));
+	
+	while(fread((readStatement+readLoop),sizeof(product_detail),1,stmt)==1)
+	{
+		newSize++;
+		readStatement=(product_detail *)realloc(readStatement,newSize*sizeof(product_detail));
+		readLoop++;
+	}
+	
+	for(int i=0; i<newSize-1; i++)
+	{
+		int flag=0,prodCount=0;
+		
+		if(readStatement[i].type=='p')
+		{
+			prodCount=readStatement[i].qnty;
+		}
+		else
+		{
+			prodCount=-readStatement[i].qnty;
+		}
+		
+		for(int j=i-1; j>=0; j--)
+		{
+			if(readStatement[i].id==readStatement[j].id && strcmp(readStatement[i].name,readStatement[j].name)==0)
+			{
+				if(readStatement[j].type=='p')
+				{
+					prodCount=prodCount+readStatement[j].qnty;
+				}
+				else
+				{
+					prodCount=prodCount-readStatement[j].qnty;
+				}
+				flag=1;
+			}
+		}
+		if(flag==1)
+		{          
+			continue;
+		}
+		readStatement[i].qnty=prodCount;
+		uniqueProductPointer[uniqueProductId]=i;
+		uniqueProductId++;
+		uniqueProduct++;
+	}
+	printf("%d\t%d",uniqueProduct,uniqueProductId);
+	inventory=(product_detail *)realloc(inventory,uniqueProduct*sizeof(product_detail));
+	
+	
 	printf("Inventory Details\n");
-	FILE *inv;
+	printf("S.No.\tParticulars\t\tQuantity\n");
+	for(int i=0;i<uniqueProduct;i++)
+	{
+		inventory[i]=readStatement[uniqueProductPointer[i]];	
+		printf("%d\t%s\t\t\t%d\n",i+1,inventory[i].name,inventory[i].qnty);
+	}
+	printf("\nPress Enter to continue to Home");
+	scanf("%c");
 }
