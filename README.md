@@ -1,2 +1,2 @@
-# library-management-c
-Library Management System made in C
+# basic-accountancy-c
+Simple Accounting System made in C
