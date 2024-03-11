@@ -15,6 +15,7 @@ void client();
 
 void main()
 {
+	system("cls");
 	FILE *fptr;//file pointer for user database
 	FILE *activeUser;//file pointer for activeUser.txt
 	creds auth;
@@ -31,13 +32,15 @@ void main()
 	{
 		err:
 		printf("Menu:\n");
-		printf("1. Log In\n2. Sign Up\n3.Check Data\n4. Exit");
+		printf("1. Log In\n2. Sign Up\n3. Check Data\n4. Exit");
 		printf("\n1/2/3/4?: ");
 		scanf("%d",&choice);
 		fflush(stdin);
 		switch(choice)
 		{
 			case 1:
+				system("cls");
+				printf("Enter Log In Details:\n");
 				printf("Username: ");
 				gets(auth.uname);	
 				printf("Password: ");
@@ -76,9 +79,11 @@ void main()
 				
 			case 4:
 				exit(0);
+				break;
 				
 			default:
-				goto err;	
+				goto err;
+				break;	
 		}	
 	}
 	if(loggedin==1)

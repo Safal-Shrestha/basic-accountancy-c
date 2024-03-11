@@ -8,12 +8,15 @@ typedef struct login{
 
 int main()
 {
+	system("cls");
 	FILE *fptr;
 	creds auth;
 	int no=1, readLoop=0, newSize=1;
 	
 	fptr=fopen("user.txt","ab+");
 	
+	
+	printf("Enter Sign Up Details:\n")
 	printf("Username: ");
 	gets(auth.uname);	
 	printf("Password: ");
