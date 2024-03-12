@@ -99,7 +99,7 @@ void stmt()
 	{
 		if(read[i].type=='p')
 		{
-			printf("%d\tFrom %s A/c Dr.\t%d\t\n",i+1,read[i].name,read[i].total);
+			printf("%d\tFrom %s A/c ... Dr.\t%d\t\n",i+1,read[i].name,read[i].total);
 			printf("\tTo %s A/c\t\t\t\t%d\n",read[i].dealer,read[i].total);
 			printf("\t(%s)\n\n",read[i].message);
 			stmt_total=stmt_total+read[i].total;
@@ -107,8 +107,8 @@ void stmt()
 		
 		if(read[i].type=='s')
 		{
-			printf("%d\tFrom %s A/c Cr.\t\t\t%d\n",i+1,read[i].name,read[i].total);
-			printf("\tTo %s A/c\t\t%d\n",read[i].dealer,read[i].total);
+			printf("\tFrom %s A/c ... Dr.\t\t%d\n",read[i].dealer,read[i].total);
+			printf("%d\tTo %s A/c \t\t\t%d\n",i+1,read[i].name,read[i].total);
 			printf("\t(%s)\n\n",read[i].message);
 			stmt_total=stmt_total+read[i].total;
 		}
@@ -316,7 +316,6 @@ void checkInventory()
 				prodCount=-readStatement[i].qnty;
 			}
 			
-//			if(readStatement[i].id==readStatement[k].id && strcmp(readStatement[i].name,readStatement[k].name)==0)
 			if(readStatement[i].id==readStatement[k].id)
 			{
 				if(readStatement[k].type=='p')

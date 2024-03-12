@@ -94,12 +94,6 @@ void main()
 			fclose(activeUser);
 			admin();
 		}
-		else
-		{
-			fclose(fptr);
-			fclose(activeUser);
-			client();		
-		}
 	}
 	
 	else
@@ -121,9 +115,4 @@ void main()
 void admin()
 {
 	system("admin");
-}
-
-void client()
-{
-	system("client");
 }
